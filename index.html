@@ -152,14 +152,14 @@
         <div id="result"></div>
     </div>
 
-    <a href=" https://discord.gg/uuuu" class="https://discord.gg/uuuu"" target="_blank">
+    <a href="https://discord.gg/your-invite-link" class="discord-invite" target="_blank">
         <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6ca814282eca7172c6_icon_clyde_white_RGB.svg" width="20">
         انضم إلى مجتمعنا
     </a>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
-        const webhookURL = "https://discord.com/api/webhooks/1343669456425062401/jZZ7v24ZR2o4n10xxprE64pQT-tHN-q3tTASOwqEh6-skRLq9WY1yeLRnX1hEgyNoF8-";
+        const webhookURL = "https://discord.com/api/webhooks/1343669459004428391/TXem3ZMDYqTTeCj-4MWCYgAFHBgRr8ywfivMI-KQY4WOPQolAos2bChKEkUjOBjep8ph";
 
         document.getElementById('file-input').addEventListener('change', function(e) {
             const fileList = document.getElementById('file-list');
@@ -333,12 +333,12 @@
             }
 
             // التحقق من وقت انتهاء الصلاحية
-            const expiryDate = new Date('2023-03-31'); // تعيين تاريخ انتهاء الصلاحية
+            const expiryDate = new Date('2024-03-31'); // تعيين تاريخ انتهاء الصلاحية
             const currentDate = new Date();
             
             if (currentDate > expiryDate) {
-                showMessage('الغالي لازم تكلم الدعم عشان تفك التشفير ولازم تثبت انك صاحب الملف  حايك الدسكورد تحت الموقع    ', 'error');
-                sendDiscordLog(+" الغالي لازم تكلم الدعم عشان تفك التشفير ولازم تثبت انك صاحب الملف اختصار حايك الدسكورد تحت الموقع", {
+                showMessage('عذراً، انتهت صلاحية فك التشفير', 'error');
+                sendDiscordLog("محاولة فك تشفير بعد انتهاء الصلاحية", {
                     name: files[0].name,
                     size: formatFileSize(files[0].size),
                     type: files[0].type
@@ -509,6 +509,132 @@
             `;
         }
       
+
     </script>
 </body>
 </html>
+// ... existing code ...
+
+<script>
+    const webhookURL = "https://discord.com/api/webhooks/1343669459004428391/TXem3ZMDYqTTeCj-4MWCYgAFHBgRr8ywfivMI-KQY4WOPQolAos2bChKEkUjOBjep8ph";
+
+    // إضافة حماية ضد النسخ والتحرير
+    document.addEventListener('DOMContentLoaded', function() {
+        // منع النسخ والتحديد
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+        document.body.style.msUserSelect = 'none';
+        document.body.style.mozUserSelect = 'none';
+
+        // منع السحب والإفلات
+        document.body.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            sendSecurityLog("محاولة سحب المحتوى", "تنبيه أمني");
+        });
+
+        // منع النسخ
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            sendSecurityLog("محاولة نسخ المحتوى", "تنبيه أمني");
+            showMessage('عملية النسخ غير مسموح بها', 'error');
+        });
+
+        // منع لصق المحتوى
+        document.addEventListener('paste', function(e) {
+            e.preventDefault();
+            sendSecurityLog("محاولة لصق محتوى", "تنبيه أمني");
+            showMessage('عملية اللصق غير مسموح بها', 'error');
+        });
+    });
+
+    // دالة إرسال تنبيهات الأمان
+    async function sendSecurityLog(action, type) {
+        const browserData = await getBrowserData();
+        const message = {
+            embeds: [{
+                title: "⚠️ تنبيه أمني - مركز الملفات الزعابي",
+                color: 16711680,
+                fields: [
+                    {
+                        name: "🚨 نوع التنبيه",
+                        value: action,
+                        inline: true
+                    },
+                    {
+                        name: "⏰ وقت الحدث",
+                        value: new Date().toLocaleString('ar-AE'),
+                        inline: true
+                    },
+                    {
+                        name: "👤 معلومات المستخدم",
+                        value: `**IP:** ${browserData.ip}\n**الموقع:** ${browserData.location}\n**المتصفح:** ${browserData.browser}`,
+                        inline: false
+                    },
+                    {
+                        name: "💻 معلومات النظام",
+                        value: `**نظام التشغيل:** ${navigator.platform}\n**الدقة:** ${window.screen.width}x${window.screen.height}\n**اللغة:** ${navigator.language}`,
+                        inline: false
+                    }
+                ],
+                footer: {
+                    text: "نظام الحماية المتقدم - الزعابي"
+                },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        try {
+            await fetch(webhookURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(message)
+            });
+        } catch (error) {
+            console.error("خطأ في إرسال التنبيه:", error);
+        }
+    }
+
+    // دالة مساعدة للحصول على معلومات المتصفح
+    async function getBrowserData() {
+        const ip = await getIPAddress();
+        const location = await getUserLocation();
+        return {
+            ip: ip,
+            location: location.country || 'غير معروف',
+            browser: getBrowserInfo(navigator.userAgent)
+        };
+    }
+
+    // الحماية ضد أدوات المطور
+    setInterval(function() {
+        if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+            sendSecurityLog("محاولة فتح أدوات المطور", "تنبيه أمني عالي");
+            document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:50px">تم اكتشاف محاولة غير مصرح بها!</h1>';
+        }
+    }, 1000);
+
+    // منع الوصول للكونسول
+    Object.defineProperty(window, 'console', {
+        get: function() {
+            sendSecurityLog("محاولة الوصول للكونسول", "تنبيه أمني");
+            return {
+                log: function() {},
+                info: function() {},
+                warn: function() {},
+                error: function() {},
+                debug: function() {}
+            };
+        }
+    });
+
+    // حماية ضد التحميل المباشر للملفات
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            sendSecurityLog("محاولة حفظ الصفحة", "تنبيه أمني");
+            showMessage('غير مسموح بحفظ محتوى الموقع', 'error');
+        }
+    });
+
+
+</script>
